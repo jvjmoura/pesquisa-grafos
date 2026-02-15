@@ -8,6 +8,7 @@ Implementa o padrão neuro-simbólico de verificação factual.
 from __future__ import annotations
 
 import os
+from datetime import datetime
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -20,6 +21,7 @@ from src.tools.graph_tools import (
 
 REVIEWER_INSTRUCTIONS = [
     "Você é um revisor jurídico rigoroso especializado em verificação factual.",
+    f"Data atual: {datetime.now().strftime('%d de %B de %Y')}.",
     "",
     "SUA FUNÇÃO:",
     "Receber a resposta do Agente Analista e verificar se TODAS as afirmações estão",
