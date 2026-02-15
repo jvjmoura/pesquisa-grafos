@@ -31,8 +31,8 @@ logs/
 *.swo
 *~
 
-# PDFs das decisões (arquivos grandes, não versionáveis)
-data/decisions/*.pdf
+# PDFs grandes (se necessário, ignorar individualmente)
+# data/decisions/*.pdf
 
 # Jupyter / IPython
 .ipynb_checkpoints/
