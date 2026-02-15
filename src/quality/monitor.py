@@ -86,6 +86,7 @@ def log_quality(
     metrics: QualityMetrics,
     analyst_text: str = "",
     reviewer_text: str = "",
+    checker_result: object | None = None,
 ) -> None:
     """Salva uma entrada no log acumulativo de qualidade (JSONL)."""
     LOG_DIR.mkdir(exist_ok=True)
@@ -98,8 +99,13 @@ def log_quality(
         reviewer_chars=len(reviewer_text),
     )
 
+    entry_dict = asdict(entry)
+    if checker_result is not None:
+        from src.quality.checker import checker_result_to_dict
+        entry_dict["checker"] = checker_result_to_dict(checker_result)
+
     with open(LOG_FILE, "a", encoding="utf-8") as f:
-        f.write(json.dumps(asdict(entry), ensure_ascii=False) + "\n")
+        f.write(json.dumps(entry_dict, ensure_ascii=False) + "\n")
 
 
 def format_quality_summary(metrics: QualityMetrics) -> str:

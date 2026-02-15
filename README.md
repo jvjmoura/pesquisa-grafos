@@ -9,16 +9,20 @@ Sistema de IA Agêntica que utiliza **Agno**, **Docling** e **Neo4j Aura** para 
 │   Docling    │────▶│  Neo4j Aura  │◀────│  Agente Analista │
 │ (OCR + PDF)  │     │  (KG cloud)  │     │  (Agno + Tools)  │
 └─────────────┘     └──────────────┘     └────────┬────────┘
-                                                   │
-                                          ┌────────▼────────┐
-                                          │ Agente Revisor   │
-                                          │ (Anti-alucinação)│
-                                          └────────┬────────┘
-                                                   │
-                                          ┌────────▼────────┐
-                                          │ Quality Monitor  │
-                                          │ (Métricas + Log) │
-                                          └─────────────────┘
+                                                  │
+                                    ┌─────────────┼─────────────┐
+                                    ▼                           ▼
+                           ┌────────────────┐      ┌────────────────────┐
+                           │ Revisor LLM    │      │ Checker Cypher     │
+                           │ (GPT-4o+Tools) │      │ (Python+Cypher)    │
+                           └───────┬────────┘      └──────────┬─────────┘
+                                   │                          │
+                                   └──────────┬───────────────┘
+                                              ▼
+                                    ┌──────────────────┐
+                                    │ Quality Monitor   │
+                                    │ (Compara + Log)   │
+                                    └──────────────────┘
 ```
 
 ### Componentes
@@ -30,8 +34,9 @@ Sistema de IA Agêntica que utiliza **Agno**, **Docling** e **Neo4j Aura** para 
 | **Knowledge Graph** | Neo4j Aura (cloud) | Mapeia decisões e relações estruturadas |
 | **Agente Analista** | Agno + OpenAI | Consulta o KG antes de gerar respostas |
 | **Agente Revisor** | Agno + OpenAI | Verifica fidelidade aos dados do grafo |
-| **Quality Monitor** | Python + JSON | Extrai métricas, calcula score, loga resultados |
-| **Pipeline** | Python sequencial | Analista → Revisor → Monitor determinístico |
+| **Checker Determinístico** | Python + Cypher | Valida claims via queries diretas ao KG (sem LLM) |
+| **Quality Monitor** | Python + JSON | Compara verificadores, calcula scores, loga resultados |
+| **Pipeline** | Python sequencial | Analista → Revisor → Checker → Monitor |
 
 ### Schema do Knowledge Graph
 
@@ -106,6 +111,7 @@ python main.py --quality-report --skip-check
 4. **Raciocínio Multi-hop:** Queries Cypher de 2-3 hops para conexões entre decisões
 5. **Verificação Neuro-Simbólica:** Agente Revisor compara respostas com dados do grafo
 6. **Quality-by-Design (Seção 5):** Monitor extrai métricas quantitativas e mantém log JSONL
+7. **Verificação Dupla:** Checker determinístico (Cypher) valida o Revisor LLM, comparando scores
 
 ## Estrutura do Projeto
 
@@ -125,11 +131,12 @@ python main.py --quality-report --skip-check
 │   ├── tools/
 │   │   └── graph_tools.py            # Tools Agno para consulta ao KG
 │   ├── quality/
-│   │   └── monitor.py                # Quality Monitor (métricas + log JSONL)
+│   │   ├── monitor.py                # Quality Monitor (métricas + log JSONL)
+│   │   └── checker.py                # Checker Determinístico (Cypher direto)
 │   └── agents/
 │       ├── analyst_agent.py           # Agente Analista
 │       ├── reviewer_agent.py          # Agente Revisor
-│       └── team.py                    # Pipeline Analista → Revisor → Monitor
+│       └── team.py                    # Pipeline Analista → Revisor → Checker → Monitor
 ├── logs/
 │   └── quality_log.jsonl              # Log acumulativo de métricas
 └── scripts/
