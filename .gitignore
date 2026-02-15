@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables (contém chaves de API)
+.env
+
+# Logs (gerados em runtime)
+logs/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# PDFs das decisões (arquivos grandes, não versionáveis)
+data/decisions/*.pdf
+
+# Jupyter / IPython
+.ipynb_checkpoints/
+
+# Temporary files
+*.tmp
+*.bak

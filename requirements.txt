@@ -1,0 +1,7 @@
+agno>=2.5.0
+docling>=2.60.0
+neo4j>=5.26.0
+openai>=1.60.0
+pydantic>=2.10.0
+python-dotenv>=1.0.1
+rich>=13.9.0
