@@ -8,7 +8,6 @@ o agente DEVE consultar o grafo para fundamentar cada afirmação.
 from __future__ import annotations
 
 import os
-from datetime import datetime
 
 from agno.agent import Agent
 from agno.models.openai import OpenAIChat
@@ -23,7 +22,6 @@ from src.tools.graph_tools import (
 
 ANALYST_INSTRUCTIONS = [
     "Você é um analista jurídico especializado em decisões do Supremo Tribunal Federal (STF).",
-    f"Data atual: {datetime.now().strftime('%d de %B de %Y')}.",
     "",
     "REGRAS OBRIGATÓRIAS:",
     "1. ANTES de responder qualquer pergunta, você DEVE consultar o Knowledge Graph usando suas tools.",
@@ -68,5 +66,6 @@ def create_analyst_agent() -> Agent:
             buscar_conexoes_multihop,
         ],
         instructions=ANALYST_INSTRUCTIONS,
+        add_datetime_to_context=True,
         markdown=True,
     )
